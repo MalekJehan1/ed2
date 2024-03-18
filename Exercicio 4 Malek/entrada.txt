@@ -1,8 +1,13 @@
-inserir 10 
-inserir 2 
-inserir 3 
-inserir 18 
-remover 2 
-inserir 5 
-remover 10 
-inserir 21 
+inserir 10
+inserir 2
+inserir 3
+inserir 18
+remover 2
+inserir 5
+remover 10
+mostra
+contFolhas
+maiorNivel
+mostraParagrafação
+verificaCompleta
+matriz

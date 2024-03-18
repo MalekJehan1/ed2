@@ -9,7 +9,7 @@ using namespace std;
 
 int main()
 {
-    arv* a = nullptr;
+    arv* a = NULL;
 
     ifstream ler;
     setlocale(LC_ALL, "Portuguese");
@@ -29,6 +29,8 @@ int main()
             strBuffer >> word;
             if(linha != "")
             {
+
+
                 if(word == "inserir")
                 {
                     string par;
@@ -38,6 +40,8 @@ int main()
                     int num = stoi(par);
 
                     inserir(&a, num);
+
+                    cout << "Valor: " << num << " inserido!" << endl;
                 }
                 else if(word == "remover")
                 {
@@ -46,17 +50,56 @@ int main()
                     strBuffer >> par;
 
                     int num = stoi(par);
-                    bool encontrado;
-                    arv *e = remover(a, num, encontrado);
-                    cout << "Removido: " << e->info;
+                    remover(&a, num);
+                    cout << "Valor: " << num << " removido!" << endl;
 
                 }
-                else if(word == " ")
+                else if(word == "mostra")
                 {
+                    mostraPre(a);
+                    cout << endl;
+                }
+                else if(word == "contFolhas")
+                {
+                    cout << "Total de elementos folhas: " << contFolhas(&a) << endl;
+                }
+                else if(word == "maiorNivel")
+                {
+                    cout << "O maior nível da árvore é: " << alturaAt(&a) - 1<< endl ;
+                }
+                else if(word == "mostraParagrafação")
+                {
+                    parag(a, 0);
+                }
+                else if(word == "verificaCompleta")
+                {
+                    if(arvoreCompletaUtil(a, 0, alturaAt(&a)))
+                        cout << "Arvore completa" << endl;
+                    else
+                        cout << "Arvore não é completa" << endl;
+                }
+                else if(word == "matriz")
+                {
+                    int matriz[5][5];
+
+                    int *mat = &matriz[5][5];
+
+                    formaMatriz(a, 0, 0, matriz);
+
+
+                    for(int i=0; i<5; i++)
+                    {
+                        for(int j=0; j<5; j++)
+                        {
+                            cout << matriz[i][j];
+                            cout << "\t";
+                        }
+                        cout << "\n";
+                    }
+
 
                 }
             }
-
         }
     }
 }

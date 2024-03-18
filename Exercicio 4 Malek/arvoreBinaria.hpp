@@ -12,11 +12,9 @@ typedef struct arv
 
 } arvore;
 
-
-
 void informaVazia()
 {
-     cout << "Arvore vazia!" << endl;
+    cout << "Arvore vazia!" << endl;
 
 }
 
@@ -47,7 +45,6 @@ void inserir(arv **t, int num)
         else
             inserir(&(*t)->sad, num);
     }
-    cout << "inserido o valor: " << num << endl;
 }
 
 void mostraPre(arvore *t)
@@ -86,38 +83,88 @@ void mostraPos(arvore *t)
     cout << ">";
 }
 
-arvore* minValorNo(arvore* no) {
-    arvore* c = no;
-    while (c && c->sae != NULL) c = c->sae;
-    return c;
-}
-
-arvore* remover(arvore* t, int num, bool &encontrado) {
-    encontrado = true;
-    if (t == NULL) {
-        encontrado = false;
-        return NULL;
+void mostraParag(arvore *t)
+{
+    cout << "*";
+    if(!testa_vazia(t))
+    {
+        cout << t->info << endl;
+        if(!testa_vazia(t->sae))
+        {
+            cout << "*";
+            mostraParag(t->sae);
+        }
+        if(!testa_vazia(t->sad))
+        {
+            cout << "*";
+            mostraParag(t->sad);
+        }
     }
-    if (num < t->info) t->sae = remover(t->sae, num, encontrado);
-    else if (num > t->info) t->sad = remover(t->sad, num, encontrado);
-    else {
-        if (t->sae == NULL) {
-            arvore* temp = t->sad;
-            delete t;
-            return temp;
+}
+void parag(arvore *t, int nivel)
+{
+    if (t != NULL)
+    {
+        for (int i = 0; i < nivel; ++i) {
+            cout << " * ";
         }
-        else if (t->sad == NULL) {
-            arvore* temp = t->sae;
-            delete t;
-            return temp;
-        }
+        cout << t->info << endl;
 
-        arvore* temp = minValorNo(t->sad);
-        t->info = temp->info;
-        t->sad = remover(t->sad, temp->info, encontrado);
-    return t;
+        parag(t->sae, nivel + 1);
+        parag(t->sad, nivel + 1);
+    }
 }
+
+
+
+
+
+arvore* remover(arvore **t, int num)
+{
+    arv *temp = (*t);
+    if(num < (*t)->info)
+        remover(&(*t)->sae, num);
+    else if(num > (*t)->info)
+        remover(&(*t)->sad, num);
+    else
+    {
+        arvore *aux = *t;
+
+        if(((*t)->sae == NULL) && ((*t)->sad == NULL))
+        {
+            delete(aux);
+            (*t) = NULL;
+        }
+        else if((*t)->sae == NULL)
+        {
+            (*t) = (*t)->sad;
+            aux->sad = NULL;
+            delete(aux);
+            aux = NULL;
+        }
+        else if((*t)->sad == NULL)
+        {
+            (*t) = (*t)->sae;
+            aux->sae = NULL;
+            delete(aux);
+            aux = NULL;
+        }
+        else
+        {
+            aux = (*t)->sae;
+            while(aux->sad != NULL)
+            {
+                aux = aux->sad;
+            }
+            (*t)->info = aux->info;
+            aux->info = num;
+            (*t)->sae = remover(&(*t)->sae, num);
+        }
+    }
+    return temp;
 }
+
+
 
 
 ///Funções backups que não deram certo - inicio
@@ -150,7 +197,7 @@ int encAlturaDir(arv **t)
 int alturaAt(arv **t)
 {
     if((*t) == nullptr)
-        return 1;
+        return 0;
     else
     {
         int esq = alturaAt(&(*t)->sae);
@@ -203,7 +250,8 @@ bool buscaValor(arv** t, int valor)
     {
         return buscaValor(&(*t)->sad, valor);
     }
-    else{
+    else
+    {
         return buscaValor(&(*t)->sae, valor);
     }
 }
@@ -258,5 +306,41 @@ int nivel(arv **t, int valor)
 ///Tentativas fracassadas de encontrar o valor e o nivel FIM
 
 
+int contFolhas(arv** t)
+{
+    if((*t) == NULL)
+        return 0;
+    else if((*t)->sae == NULL && (*t)->sad == NULL)
+        return 1;
+    else
+        return contFolhas(&(*t)->sae) + contFolhas(&(*t)->sad);
+}
+
+bool arvoreCompletaUtil(arvore *raiz, int nivel, int alturaArvore) {
+    if (raiz == NULL)
+        return true;
+
+    // Se o nível atual for o último nível, então o nó não pode ter nenhum filho
+    if (nivel == alturaArvore)
+        return (raiz->sae == NULL && raiz->sad == NULL);
+
+    // Se o nó não tiver um filho direito, todos os nós à sua direita também devem ser folhas
+    if (raiz->sad == NULL && raiz->sae != NULL)
+        return false;
+
+    // Recursivamente verifica os filhos esquerdo e direito
+    return arvoreCompletaUtil(raiz->sae, nivel + 1, alturaArvore) &&
+           arvoreCompletaUtil(raiz->sad, nivel + 1, alturaArvore);
+}
+
+void formaMatriz(arv* t, int i, int j, int mat[5][5])
+{
+    if(!testa_vazia(t))
+    {
+        mat[i][j] = t->info;
+        formaMatriz(t->sae, i+1, j, mat);
+        formaMatriz(t->sad, i+1, j, mat);
+    }
+}
 
 #endif
